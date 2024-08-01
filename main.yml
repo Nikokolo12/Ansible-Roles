@@ -1,0 +1,7 @@
+---
+- name: Docker & Docker Compose installation
+  hosts: all
+  become: true
+  roles:
+    - docker
+    - nginx

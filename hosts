@@ -1,0 +1,6 @@
+[all]
+ec2-54-175-105-129.compute-1.amazonaws.com
+
+[all:vars]
+ansible_user=ubuntu
+ansible_ssh_private_key_file=~/ansible_key/python-gitlab.pem

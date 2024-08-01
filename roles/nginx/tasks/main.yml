@@ -1,0 +1,51 @@
+---
+- name: Update
+  ansible.builtin.apt:
+    update_cache: yes
+    cache_valid_time: 3600
+    upgrade: yes
+      
+- name: Install Nginx
+  ansible.builtin.apt:
+    name: nginx
+    state: latest
+    allow_downgrade: yes
+
+- name: Create Nginx directory
+  ansible.builtin.file:
+    path: "{{ nginx_custom_directory }}"
+    state: directory
+
+- name: Copy Nginx conf file
+  ansible.builtin.copy:
+    src: templates/nginx.conf
+    dest: /etc/nginx/sites-available/default
+    mode: "0644"
+
+- name: Create .htpasswd file
+  command: htpasswd -b -c /etc/nginx/.htpasswd "{{user}}" "{{pass}}" 
+  become: yes
+  args:
+    creates: /etc/nginx/.htpasswd
+  notify: Restart Nginx
+
+- name: Allow HTTP traffic
+  ansible.builtin.iptables:
+    chain: INPUT
+    protocol: tcp
+    destination_port: 80
+    jump: ACCEPT
+
+- name: Copy web files to the host 
+  ansible.builtin.copy:
+    src: templates/web/
+    dest: "{{ nginx_custom_directory }}"
+    mode: "0644"
+    remote_src: no
+  notify: Restart Nginx
+
+- name: Ensure Nginx is started and enabled
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: true
