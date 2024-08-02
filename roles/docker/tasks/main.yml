@@ -9,6 +9,12 @@
   register: docker_compose_installed
   ignore_errors: yes
 
+- name: Update
+  ansible.builtin.apt:
+    update_cache: yes
+    cache_valid_time: 3600
+    upgrade: yes
+
 - name: Install other tools
   apt:
     name:
@@ -18,6 +24,7 @@
       - curl
       - software-properties-common
     state: present
+  when: docker_installed.failed
 
 - name: Add Docker's GPG key
   apt_key:

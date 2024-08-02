@@ -1,5 +1,5 @@
 [all]
-ec2-54-175-105-129.compute-1.amazonaws.com
+ec2-3-86-109-159.compute-1.amazonaws.com
 
 [all:vars]
 ansible_user=ubuntu
